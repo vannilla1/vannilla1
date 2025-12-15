@@ -7,7 +7,10 @@
                 <h2 class="h5">{{ contact.name }}</h2>
                 <p class="mb-1"><strong>Email:</strong> {{ contact.email or '—' }}</p>
                 <p class="mb-1"><strong>Telefón:</strong> {{ contact.phone or '—' }}</p>
-                <p class="mb-0"><strong>Poznámky:</strong><br>{{ contact.notes or 'Žiadne poznámky' }}</p>
+                <p class="mb-3"><strong>Poznámky:</strong><br>{{ contact.notes or 'Žiadne poznámky' }}</p>
+                <form method="post" action="{{ url_for('delete_contact', contact_id=contact.id) }}" onsubmit="return confirm('Naozaj chcete vymazať tento kontakt?');">
+                    <button class="btn btn-outline-danger btn-sm w-100" type="submit">Vymazať kontakt</button>
+                </form>
             </div>
         </div>
         <div class="card shadow-sm">
@@ -92,14 +95,19 @@
                                     <div class="text-muted small">{{ task.description }}</div>
                                     {% if task.assignee %}<div class="small">Pridelené: {{ task.assignee.username }}</div>{% endif %}
                                 </div>
-                                <form method="post" action="{{ url_for('update_task_status', task_id=task.id) }}" class="d-flex gap-2">
-                                    <select class="form-select form-select-sm" name="status">
-                                        {% for state in ['Nová','Rozpracovaná','Čaká','Hotová'] %}
-                                            <option value="{{ state }}" {% if task.status == state %}selected{% endif %}>{{ state }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    <button class="btn btn-sm btn-outline-success" type="submit">Uložiť</button>
-                                </form>
+                                <div class="d-flex gap-2">
+                                    <form method="post" action="{{ url_for('update_task_status', task_id=task.id) }}" class="d-flex gap-2">
+                                        <select class="form-select form-select-sm" name="status">
+                                            {% for state in ['Nová','Rozpracovaná','Čaká','Hotová'] %}
+                                                <option value="{{ state }}" {% if task.status == state %}selected{% endif %}>{{ state }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <button class="btn btn-sm btn-outline-success" type="submit">Uložiť</button>
+                                    </form>
+                                    <form method="post" action="{{ url_for('delete_task', task_id=task.id) }}" onsubmit="return confirm('Naozaj chcete vymazať túto úlohu?');">
+                                        <button class="btn btn-sm btn-outline-danger" type="submit">Vymazať</button>
+                                    </form>
+                                </div>
                             </div>
                             {% if task.subtasks %}
                                 <ul class="list-group list-group-flush ms-3 mt-2">

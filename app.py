@@ -29,6 +29,21 @@ def allowed_file(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def delete_attachment_file(attachment: "Attachment") -> None:
+    file_path = UPLOAD_FOLDER / attachment.stored_name
+    if file_path.exists():
+        file_path.unlink()
+
+
+def delete_task_with_children(task: "Task") -> None:
+    for sub in list(task.subtasks):
+        delete_task_with_children(sub)
+    for attachment in list(task.attachments):
+        delete_attachment_file(attachment)
+        db.session.delete(attachment)
+    db.session.delete(task)
+
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -194,6 +209,32 @@ def update_task_status(task_id):
     db.session.commit()
     flash("Stav úlohy bol aktualizovaný", "success")
     return redirect(url_for("contact_detail", contact_id=task.contact_id))
+
+
+@app.route("/tasks/<int:task_id>/delete", methods=["POST"])
+@login_required
+def delete_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    contact_id = task.contact_id
+    delete_task_with_children(task)
+    db.session.commit()
+    flash("Úloha bola odstránená", "success")
+    return redirect(url_for("contact_detail", contact_id=contact_id))
+
+
+@app.route("/contacts/<int:contact_id>/delete", methods=["POST"])
+@login_required
+def delete_contact(contact_id):
+    contact = Contact.query.get_or_404(contact_id)
+    for attachment in [a for a in contact.attachments if a.task_id is None]:
+        delete_attachment_file(attachment)
+        db.session.delete(attachment)
+    for task in list(contact.tasks):
+        delete_task_with_children(task)
+    db.session.delete(contact)
+    db.session.commit()
+    flash("Kontakt bol odstránený", "success")
+    return redirect(url_for("contacts"))
 
 
 @app.route("/contacts/<int:contact_id>/upload", methods=["POST"])

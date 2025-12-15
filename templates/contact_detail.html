@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <h2 class="h5">{{ contact.name }}</h2>
+                <p class="mb-1"><strong>Email:</strong> {{ contact.email or '—' }}</p>
+                <p class="mb-1"><strong>Telefón:</strong> {{ contact.phone or '—' }}</p>
+                <p class="mb-0"><strong>Poznámky:</strong><br>{{ contact.notes or 'Žiadne poznámky' }}</p>
+            </div>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="h6 mb-3">Pridať súbor</h3>
+                <form method="post" action="{{ url_for('upload_file', contact_id=contact.id) }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <input class="form-control" type="file" name="file" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Priradiť k úlohe (nepovinné)</label>
+                        <select class="form-select" name="task_id">
+                            <option value="">Len kontakt</option>
+                            {% for task in contact.tasks %}
+                                <option value="{{ task.id }}">{{ task.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button class="btn btn-primary w-100" type="submit">Nahrať</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="h5 mb-0">Úlohy</h3>
+                    <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#taskForm">Nová úloha</button>
+                </div>
+                <div id="taskForm" class="collapse">
+                    <form method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Názov</label>
+                                <input class="form-control" type="text" name="title" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Stav</label>
+                                <select class="form-select" name="status">
+                                    <option>Nová</option>
+                                    <option>Rozpracovaná</option>
+                                    <option>Čaká</option>
+                                    <option>Hotová</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Prideliť</label>
+                                <select class="form-select" name="assignee_id">
+                                    <option value="">Nepovinné</option>
+                                    {% for user in assignees %}
+                                        <option value="{{ user.id }}">{{ user.username }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Nadväzuje na</label>
+                                <select class="form-select" name="parent_task_id">
+                                    <option value="">Žiadna nadradená</option>
+                                    {% for task in contact.tasks %}
+                                        <option value="{{ task.id }}">{{ task.title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Popis</label>
+                                <textarea class="form-control" name="description" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="mt-3 text-end">
+                            <button class="btn btn-primary" type="submit">Pridať úlohu</button>
+                        </div>
+                    </form>
+                </div>
+                <hr>
+                {% if tasks %}
+                    {% for task in tasks %}
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <strong>{{ task.title }}</strong>
+                                    <div class="text-muted small">{{ task.description }}</div>
+                                    {% if task.assignee %}<div class="small">Pridelené: {{ task.assignee.username }}</div>{% endif %}
+                                </div>
+                                <form method="post" action="{{ url_for('update_task_status', task_id=task.id) }}" class="d-flex gap-2">
+                                    <select class="form-select form-select-sm" name="status">
+                                        {% for state in ['Nová','Rozpracovaná','Čaká','Hotová'] %}
+                                            <option value="{{ state }}" {% if task.status == state %}selected{% endif %}>{{ state }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button class="btn btn-sm btn-outline-success" type="submit">Uložiť</button>
+                                </form>
+                            </div>
+                            {% if task.subtasks %}
+                                <ul class="list-group list-group-flush ms-3 mt-2">
+                                    {% for sub in task.subtasks %}
+                                        <li class="list-group-item">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span>{{ sub.title }}</span>
+                                                <span class="badge bg-info text-dark">{{ sub.status }}</span>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">Zatiaľ žiadne úlohy.</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="h5 mb-3">Súbory</h3>
+                <div class="list-group list-group-flush">
+                    {% for attachment in contact.attachments %}
+                        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" href="{{ url_for('download_file', filename=attachment.stored_name) }}">
+                            <div>
+                                {{ attachment.original_name }}
+                                {% if attachment.task %}
+                                    <div class="small text-muted">Úloha: {{ attachment.task.title }}</div>
+                                {% endif %}
+                            </div>
+                            <span class="badge bg-light text-dark">{{ attachment.uploaded_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                        </a>
+                    {% else %}
+                        <div class="list-group-item text-muted">Žiadne súbory</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

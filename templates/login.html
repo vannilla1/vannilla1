@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h4 mb-3">Prihlásenie</h1>
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Užívateľské meno</label>
+                        <input class="form-control" type="text" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Heslo</label>
+                        <input class="form-control" type="password" name="password" required>
+                    </div>
+                    <button class="btn btn-primary w-100" type="submit">Prihlásiť</button>
+                </form>
+                <p class="text-muted small mt-3">Predvolené účty: manager/manager123, agent/agent123</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

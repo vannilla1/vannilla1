@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h2 class="h5 mb-0">Posledné kontakty</h2>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ url_for('new_contact') }}">Pridať kontakt</a>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for contact in contacts %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ contact.name }}</strong>
+                                <div class="text-muted small">{{ contact.email }} | {{ contact.phone }}</div>
+                            </div>
+                            <a class="btn btn-sm btn-primary" href="{{ url_for('contact_detail', contact_id=contact.id) }}">Detail</a>
+                        </li>
+                    {% else %}
+                        <li class="list-group-item text-muted">Zatiaľ žiadne kontakty</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5 mb-3">Rýchly prehľad úloh</h2>
+                <div class="list-group list-group-flush">
+                    {% for task in tasks %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong>{{ task.title }}</strong>
+                                    <div class="text-muted small">Kontakt: {{ task.contact.name }}</div>
+                                    {% if task.assignee %}
+                                        <div class="small">Pridelené: {{ task.assignee.username }}</div>
+                                    {% endif %}
+                                </div>
+                                <span class="badge bg-info text-dark">{{ task.status }}</span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="list-group-item text-muted">Zatiaľ žiadne úlohy</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

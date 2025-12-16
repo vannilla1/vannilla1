@@ -150,7 +150,7 @@
                                         <li class="list-group-item">
                                             <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
                                                 <div class="me-3">{{ sub.title }}</div>
-                                                <div class="d-flex gap-2 flex-wrap">
+                                                <div class="d-flex align-items-center flex-wrap gap-1">
                                                     <form method="post" action="{{ url_for('update_task_status', task_id=sub.id) }}" class="d-flex gap-2 flex-wrap">
                                                         <select class="form-select form-select-sm" name="status">
                                                             {% for state in ['Nová','Rozpracovaná','Čaká','Hotová'] %}
@@ -159,10 +159,45 @@
                                                         </select>
                                                         <button class="btn btn-sm btn-outline-success" type="submit">Uložiť</button>
                                                     </form>
+                                                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#editSub{{ sub.id }}">Upraviť</button>
                                                     <form method="post" action="{{ url_for('delete_task', task_id=sub.id) }}" onsubmit="return confirm('Naozaj chcete vymazať túto úlohu?');">
                                                         <button class="btn btn-sm btn-outline-danger" type="submit">Vymazať</button>
                                                     </form>
                                                 </div>
+                                            </div>
+                                            <div class="collapse" id="editSub{{ sub.id }}">
+                                                <form method="post" action="{{ url_for('edit_task', task_id=sub.id) }}" class="card card-body border-0 p-3 mt-2 bg-light">
+                                                    <div class="row g-2">
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Názov</label>
+                                                            <input class="form-control form-control-sm" type="text" name="title" value="{{ sub.title }}" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Stav</label>
+                                                            <select class="form-select form-select-sm" name="status">
+                                                                {% for state in ['Nová','Rozpracovaná','Čaká','Hotová'] %}
+                                                                    <option value="{{ state }}" {% if sub.status == state %}selected{% endif %}>{{ state }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Pridelené</label>
+                                                            <select class="form-select form-select-sm" name="assignee_id">
+                                                                <option value="">Nepovinné</option>
+                                                                {% for user in assignees %}
+                                                                    <option value="{{ user.id }}" {% if sub.assignee_id == user.id %}selected{% endif %}>{{ user.username }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <label class="form-label">Popis</label>
+                                                            <textarea class="form-control form-control-sm" name="description" rows="2">{{ sub.description }}</textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-2 text-end">
+                                                        <button class="btn btn-sm btn-primary" type="submit">Uložiť zmeny</button>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </li>
                                     {% endfor %}

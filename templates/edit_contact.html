@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h4 mb-3">Upraviť kontakt</h1>
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Meno</label>
+                        <input class="form-control" type="text" name="name" value="{{ contact.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input class="form-control" type="email" name="email" value="{{ contact.email }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Telefón</label>
+                        <input class="form-control" type="text" name="phone" value="{{ contact.phone }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Poznámky</label>
+                        <textarea class="form-control" name="notes" rows="3">{{ contact.notes }}</textarea>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Uložiť zmeny</button>
+                    <a class="btn btn-link" href="{{ url_for('contacts') }}">Späť</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -24,6 +24,7 @@
                     <td class="text-end">
                         <div class="btn-group">
                             <a class="btn btn-sm btn-outline-primary" href="{{ url_for('contact_detail', contact_id=contact.id) }}">Otvoriť</a>
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('edit_contact', contact_id=contact.id) }}">Upraviť</a>
                             <form method="post" action="{{ url_for('delete_contact', contact_id=contact.id) }}" onsubmit="return confirm('Naozaj chcete vymazať tento kontakt?');">
                                 <button class="btn btn-sm btn-outline-danger" type="submit">Vymazať</button>
                             </form>

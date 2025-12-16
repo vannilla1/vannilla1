@@ -175,6 +175,25 @@ def new_contact():
     return render_template("new_contact.html")
 
 
+@app.route("/contacts/<int:contact_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_contact(contact_id):
+    contact = Contact.query.get_or_404(contact_id)
+    if request.method == "POST":
+        name = request.form.get("name")
+        if not name:
+            flash("Meno je povinné", "danger")
+            return redirect(url_for("edit_contact", contact_id=contact.id))
+        contact.name = name
+        contact.email = request.form.get("email")
+        contact.phone = request.form.get("phone")
+        contact.notes = request.form.get("notes")
+        db.session.commit()
+        flash("Kontakt bol upravený", "success")
+        return redirect(url_for("contact_detail", contact_id=contact.id))
+    return render_template("edit_contact.html", contact=contact)
+
+
 @app.route("/contacts/<int:contact_id>", methods=["GET", "POST"])
 @login_required
 def contact_detail(contact_id):

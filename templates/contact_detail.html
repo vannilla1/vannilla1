@@ -115,14 +115,19 @@
                                         <li class="list-group-item">
                                             <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
                                                 <div class="me-3">{{ sub.title }}</div>
-                                                <form method="post" action="{{ url_for('update_task_status', task_id=sub.id) }}" class="d-flex gap-2 flex-wrap">
-                                                    <select class="form-select form-select-sm" name="status">
-                                                        {% for state in ['Nová','Rozpracovaná','Čaká','Hotová'] %}
-                                                            <option value="{{ state }}" {% if sub.status == state %}selected{% endif %}>{{ state }}</option>
-                                                        {% endfor %}
-                                                    </select>
-                                                    <button class="btn btn-sm btn-outline-success" type="submit">Uložiť</button>
-                                                </form>
+                                                <div class="d-flex gap-2 flex-wrap">
+                                                    <form method="post" action="{{ url_for('update_task_status', task_id=sub.id) }}" class="d-flex gap-2 flex-wrap">
+                                                        <select class="form-select form-select-sm" name="status">
+                                                            {% for state in ['Nová','Rozpracovaná','Čaká','Hotová'] %}
+                                                                <option value="{{ state }}" {% if sub.status == state %}selected{% endif %}>{{ state }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                        <button class="btn btn-sm btn-outline-success" type="submit">Uložiť</button>
+                                                    </form>
+                                                    <form method="post" action="{{ url_for('delete_task', task_id=sub.id) }}" onsubmit="return confirm('Naozaj chcete vymazať túto úlohu?');">
+                                                        <button class="btn btn-sm btn-outline-danger" type="submit">Vymazať</button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </li>
                                     {% endfor %}

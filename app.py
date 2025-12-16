@@ -266,5 +266,17 @@ def download_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename, as_attachment=True)
 
 
+@app.route("/attachments/<int:attachment_id>/delete", methods=["POST"])
+@login_required
+def delete_attachment(attachment_id):
+    attachment = Attachment.query.get_or_404(attachment_id)
+    contact_id = attachment.contact_id
+    delete_attachment_file(attachment)
+    db.session.delete(attachment)
+    db.session.commit()
+    flash("Súbor bol odstránený", "success")
+    return redirect(url_for("contact_detail", contact_id=contact_id))
+
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))

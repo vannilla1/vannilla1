@@ -133,15 +133,20 @@
                 <h3 class="h5 mb-3">Súbory</h3>
                 <div class="list-group list-group-flush">
                     {% for attachment in contact.attachments %}
-                        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" href="{{ url_for('download_file', filename=attachment.stored_name) }}">
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
                             <div>
-                                {{ attachment.original_name }}
+                                <a class="text-decoration-none" href="{{ url_for('download_file', filename=attachment.stored_name) }}">{{ attachment.original_name }}</a>
                                 {% if attachment.task %}
                                     <div class="small text-muted">Úloha: {{ attachment.task.title }}</div>
                                 {% endif %}
                             </div>
-                            <span class="badge bg-light text-dark">{{ attachment.uploaded_at.strftime('%d.%m.%Y %H:%M') }}</span>
-                        </a>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-light text-dark">{{ attachment.uploaded_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                                <form method="post" action="{{ url_for('delete_attachment', attachment_id=attachment.id) }}" onsubmit="return confirm('Naozaj chcete vymazať tento súbor?');">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Vymazať</button>
+                                </form>
+                            </div>
+                        </div>
                     {% else %}
                         <div class="list-group-item text-muted">Žiadne súbory</div>
                     {% endfor %}

@@ -2,17 +2,19 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <div class="card shadow-sm">
+        <div class="card">
             <div class="card-body">
-                <h1 class="h4 mb-3">Prihlásenie</h1>
-                <form method="post">
+                <p class="text-uppercase text-muted fw-semibold small mb-1">Vitáte</p>
+                <h1 class="h4 mb-1">Prihláste sa do CRM</h1>
+                <p class="text-muted mb-4">Zostaňte prihlásení a sledujte kontakty aj úlohy bez čakania.</p>
+                <form method="post" class="glass-panel">
                     <div class="mb-3">
                         <label class="form-label">Užívateľské meno</label>
-                        <input class="form-control" type="text" name="username" required>
+                        <input class="form-control" type="text" name="username" placeholder="manager" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Heslo</label>
-                        <input class="form-control" type="password" name="password" required>
+                        <input class="form-control" type="password" name="password" placeholder="••••••••" required>
                     </div>
                     <button class="btn btn-primary w-100" type="submit">Prihlásiť</button>
                 </form>

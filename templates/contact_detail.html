@@ -1,14 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
+{% set status_classes = {
+    'Nová': 'badge-soft badge-soft-muted',
+    'Rozpracovaná': 'badge-soft badge-soft-info',
+    'Čaká': 'badge-soft badge-soft-warning',
+    'Hotová': 'badge-soft badge-soft-success'
+} %}
 <div class="row g-4">
     <div class="col-lg-4">
-        <div class="card shadow-sm mb-3">
+        <div class="card mb-3">
             <div class="card-body">
-                <h2 class="h5">{{ contact.name }}</h2>
-                <p class="mb-1"><strong>Email:</strong> {{ contact.email or '—' }}</p>
-                <p class="mb-1"><strong>Telefón:</strong> {{ contact.phone or '—' }}</p>
-                <p class="mb-3"><strong>Poznámky:</strong><br>{{ contact.notes or 'Žiadne poznámky' }}</p>
-                <div class="d-flex gap-2">
+                <p class="text-uppercase text-muted fw-semibold small mb-1">Informácie o kontakte</p>
+                <h2 class="h5 mb-2">{{ contact.name }}</h2>
+                <p class="mb-2 text-muted"><strong>Email:</strong> {{ contact.email or '—' }}</p>
+                <p class="mb-2 text-muted"><strong>Telefón:</strong> {{ contact.phone or '—' }}</p>
+                <p class="mb-3 text-muted"><strong>Poznámky:</strong><br>{{ contact.notes or 'Žiadne poznámky' }}</p>
+                <div class="d-flex gap-2 flex-wrap">
                     <a class="btn btn-outline-secondary btn-sm flex-grow-1" href="{{ url_for('edit_contact', contact_id=contact.id) }}">Upraviť</a>
                     <form class="flex-grow-1" method="post" action="{{ url_for('delete_contact', contact_id=contact.id) }}" onsubmit="return confirm('Naozaj chcete vymazať tento kontakt?');">
                         <button class="btn btn-outline-danger btn-sm w-100" type="submit">Vymazať</button>
@@ -18,9 +25,12 @@
         </div>
         <div class="card shadow-sm">
             <div class="card-body">
-                <h3 class="h6 mb-3">Pridať súbor</h3>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="section-title mb-0">Pridať súbor</div>
+                </div>
                 <form method="post" action="{{ url_for('upload_file', contact_id=contact.id) }}" enctype="multipart/form-data">
                     <div class="mb-3">
+                        <label class="form-label">Vyberte súbor</label>
                         <input class="form-control" type="file" name="file" required>
                     </div>
                     <div class="mb-3">
@@ -38,14 +48,14 @@
         </div>
     </div>
     <div class="col-lg-8">
-        <div class="card shadow-sm mb-3">
+        <div class="card mb-3">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3 class="h5 mb-0">Úlohy</h3>
+                    <div class="section-title mb-0">Úlohy</div>
                     <button class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#taskForm">Nová úloha</button>
                 </div>
                 <div id="taskForm" class="collapse">
-                    <form method="post">
+                    <form method="post" class="glass-panel mb-3">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Názov</label>
@@ -91,15 +101,16 @@
                 <hr>
                 {% if tasks %}
                     {% for task in tasks %}
-                        <div class="mb-3">
+                        <div class="mb-3 p-3 rounded" style="background:#f8fafc; border:1px solid #e5e7eb;">
                             <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                                 <div>
-                                    <strong>{{ task.title }}</strong>
-                                    <div class="text-muted small">{{ task.description }}</div>
-                                    {% if task.assignee %}<div class="small">Pridelené: {{ task.assignee.username }}</div>{% endif %}
+                                    <div class="fw-semibold">{{ task.title }}</div>
+                                    <div class="text-muted small mb-1">{{ task.description }}</div>
+                                    {% if task.assignee %}<div class="small text-muted">Pridelené: {{ task.assignee.username }}</div>{% endif %}
                                 </div>
                                 <div class="d-flex align-items-center flex-wrap gap-2">
-                                    <form method="post" action="{{ url_for('update_task_status', task_id=task.id) }}" class="d-flex gap-2 align-items-center">
+                                    <span class="{{ status_classes.get(task.status, 'badge-soft') }}">{{ task.status }}</span>
+                                    <form method="post" action="{{ url_for('update_task_status', task_id=task.id) }}" class="d-flex gap-2 align-items-center flex-wrap">
                                         <select class="form-select form-select-sm" name="status">
                                             {% for state in ['Nová','Rozpracovaná','Čaká','Hotová'] %}
                                                 <option value="{{ state }}" {% if task.status == state %}selected{% endif %}>{{ state }}</option>
@@ -114,7 +125,7 @@
                                 </div>
                             </div>
                             <div class="collapse" id="editTask{{ task.id }}">
-                                <form method="post" action="{{ url_for('edit_task', task_id=task.id) }}" class="card card-body border-0 p-3 mt-2 bg-light">
+                                <form method="post" action="{{ url_for('edit_task', task_id=task.id) }}" class="card card-body border-0 p-3 mt-2 bg-white">
                                     <div class="row g-2">
                                         <div class="col-md-6">
                                             <label class="form-label">Názov</label>
@@ -152,8 +163,12 @@
                                     {% for sub in task.subtasks %}
                                         <li class="list-group-item">
                                             <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
-                                                <div class="me-3">{{ sub.title }}</div>
+                                                <div class="me-3">
+                                                    <div class="fw-semibold">{{ sub.title }}</div>
+                                                    <div class="text-muted small">{{ sub.description }}</div>
+                                                </div>
                                                 <div class="d-flex align-items-center flex-wrap gap-2">
+                                                    <span class="{{ status_classes.get(sub.status, 'badge-soft') }}">{{ sub.status }}</span>
                                                     <form method="post" action="{{ url_for('update_task_status', task_id=sub.id) }}" class="d-flex gap-2 flex-wrap">
                                                         <select class="form-select form-select-sm" name="status">
                                                             {% for state in ['Nová','Rozpracovaná','Čaká','Hotová'] %}
@@ -215,18 +230,18 @@
         </div>
         <div class="card shadow-sm">
             <div class="card-body">
-                <h3 class="h5 mb-3">Súbory</h3>
+                <div class="section-title mb-3">Súbory</div>
                 <div class="list-group list-group-flush">
                     {% for attachment in contact.attachments %}
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-3">
                             <div>
-                                <a class="text-decoration-none" href="{{ url_for('download_file', filename=attachment.stored_name) }}">{{ attachment.original_name }}</a>
+                                <a class="fw-semibold text-decoration-none" href="{{ url_for('download_file', filename=attachment.stored_name) }}">{{ attachment.original_name }}</a>
                                 {% if attachment.task %}
                                     <div class="small text-muted">Úloha: {{ attachment.task.title }}</div>
                                 {% endif %}
                             </div>
                             <div class="d-flex align-items-center gap-2">
-                                <span class="badge bg-light text-dark">{{ attachment.uploaded_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                                <span class="badge-soft">{{ attachment.uploaded_at.strftime('%d.%m.%Y %H:%M') }}</span>
                                 <form method="post" action="{{ url_for('delete_attachment', attachment_id=attachment.id) }}" onsubmit="return confirm('Naozaj chcete vymazať tento súbor?');">
                                     <button class="btn btn-sm btn-outline-danger" type="submit">Vymazať</button>
                                 </form>

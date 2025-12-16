@@ -26,6 +26,7 @@ Aplikácia beží na `http://localhost:5000`.
 ## Funkcie
 - Prehľad posledných kontaktov a úloh na úvodnej stránke.
 - Správa kontaktov s detailom a poznámkami.
+- Vyhľadávanie kontaktov podľa mena, emailu, telefónu alebo poznámky.
 - Vetvené úlohy (možnosť vybrať nadradenú úlohu) a priraďovanie k používateľom.
 - Nahrávanie súborov ku kontaktom alebo konkrétnym úlohám, s históriou nahrávania.
 - Jednoduchá zmena stavu úloh priamo v detaile kontaktu.

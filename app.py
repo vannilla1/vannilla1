@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from sqlalchemy import or_
 
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_FOLDER = BASE_DIR / "uploads"
@@ -151,7 +152,20 @@ def logout():
 @app.route("/contacts")
 @login_required
 def contacts():
-    return render_template("contacts.html", contacts=Contact.query.order_by(Contact.created_at.desc()).all())
+    query = request.args.get("q", "").strip()
+    contact_query = Contact.query
+    if query:
+        pattern = f"%{query}%"
+        contact_query = contact_query.filter(
+            or_(
+                Contact.name.ilike(pattern),
+                Contact.email.ilike(pattern),
+                Contact.phone.ilike(pattern),
+                Contact.notes.ilike(pattern),
+            )
+        )
+    contacts = contact_query.order_by(Contact.created_at.desc()).all()
+    return render_template("contacts.html", contacts=contacts, query=query)
 
 
 @app.route("/contacts/new", methods=["GET", "POST"])

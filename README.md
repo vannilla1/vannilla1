@@ -1,12 +1,32 @@
-- 👋 Hi, I’m @vannilla1
-- 👀 I’m interested in code, ai and everithing everything around programming
-- 🌱 I’m currently learning html, css and I want to know other languages
-- 💞️ I’m looking to collaborate on in coding. I'm learning, any advice is good.
-- 📫 How to reach me.  I don't know what the options are yet.
-- 😄 Pronouns: ?
-- ⚡ Fun fact: I know that I know nothing.
+# Mini CRM pre dvoch používateľov
 
-<!---
-vannilla1/vannilla1 is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-You can click the Preview link to take a look at your changes.
---->
+Jednoduchá CRM aplikácia vo Flasku s podporou dvoch predvolených účtov, nahrávania súborov a vetvením úloh.
+
+## Požiadavky
+- Python 3.11+
+- virtualenv (odporúčaný)
+
+## Inštalácia
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+## Spustenie
+```bash
+python app.py
+```
+Aplikácia beží na `http://localhost:5000`.
+
+## Prihlásenie
+- `manager` / `manager123`
+- `agent` / `agent123`
+
+## Funkcie
+- Prehľad posledných kontaktov a úloh na úvodnej stránke.
+- Správa kontaktov s detailom a poznámkami.
+- Vyhľadávanie kontaktov podľa mena, emailu, telefónu alebo poznámky.
+- Vetvené úlohy (možnosť vybrať nadradenú úlohu) a priraďovanie k používateľom.
+- Nahrávanie súborov ku kontaktom alebo konkrétnym úlohám, s históriou nahrávania.
+- Jednoduchá zmena stavu úloh priamo v detaile kontaktu.

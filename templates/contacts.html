@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-3">
+    <div>
+        <h1 class="h4 mb-1 section-title">Kontakty</h1>
+        <p class="text-muted mb-0">Rýchlo nájdite ľudí podľa mena, emailu alebo poznámky.</p>
+    </div>
+    <div class="d-flex gap-2 w-100 w-lg-auto flex-wrap">
+        <form class="d-flex gap-2 flex-grow-1" method="get" action="{{ url_for('contacts') }}">
+            <div class="input-group flex-grow-1">
+                <span class="input-group-text bg-white border-end-0">🔍</span>
+                <input class="form-control border-start-0" type="search" name="q" placeholder="Hľadať kontakt" value="{{ query or '' }}">
+            </div>
+            <button class="btn btn-outline-secondary" type="submit">Filtrovať</button>
+            {% if query %}
+                <a class="btn btn-light" href="{{ url_for('contacts') }}">Vymazať filter</a>
+            {% endif %}
+        </form>
+        <a class="btn btn-primary" href="{{ url_for('new_contact') }}">Nový kontakt</a>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body p-0">
+        <div class="d-flex justify-content-between align-items-center px-4 pt-3 pb-2">
+            <div class="badge-soft">{{ contacts|length }} výsledkov</div>
+            {% if query %}
+                <div class="small text-muted">Filtrované pre „{{ query }}“</div>
+            {% endif %}
+        </div>
+        <table class="table mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Meno</th>
+                    <th>Email</th>
+                    <th>Telefón</th>
+                    <th class="text-end pe-4">Akcia</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contact in contacts %}
+                <tr>
+                    <td class="ps-4 fw-semibold">{{ contact.name }}</td>
+                    <td class="text-muted">{{ contact.email or '—' }}</td>
+                    <td class="text-muted">{{ contact.phone or '—' }}</td>
+                    <td class="text-end pe-4">
+                        <div class="d-inline-flex flex-wrap gap-2">
+                            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('contact_detail', contact_id=contact.id)}}">Otvoriť</a>
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('edit_contact', contact_id=contact.id)}}">Upraviť</a>
+                            <form method="post" action="{{ url_for('delete_contact', contact_id=contact.id) }}" onsubmit="return confirm('Naozaj chcete vymazať tento kontakt?');">
+                                <button class="btn btn-sm btn-outline-danger" type="submit">Vymazať</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="text-center text-muted py-4">Žiadne kontakty</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

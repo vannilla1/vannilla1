@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="hero mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+        <div>
+            <p class="text-uppercase text-muted fw-semibold small mb-1">Vitajte späť</p>
+            <h1 class="h3 mb-1">Prehľad CRM na jeden pohľad</h1>
+            <p class="text-muted mb-0">Spravujte kontakty, úlohy a súbory v modernom rozhraní, ktoré vás nebude zdržiavať.</p>
+        </div>
+        <a class="btn btn-primary btn-lg" href="{{ url_for('new_contact') }}">Pridať nový kontakt</a>
+    </div>
+</div>
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="section-title mb-0">Posledné kontakty</div>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ url_for('new_contact') }}">Nový</a>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for contact in contacts %}
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="fw-semibold">{{ contact.name }}</div>
+                                <div class="text-muted small">{{ contact.email or 'Žiadny email' }} • {{ contact.phone or 'Bez čísla' }}</div>
+                            </div>
+                            <a class="btn btn-sm btn-primary" href="{{ url_for('contact_detail', contact_id=contact.id) }}">Detail</a>
+                        </li>
+                    {% else %}
+                        <li class="list-group-item text-muted">Zatiaľ žiadne kontakty</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="section-title mb-3">Rýchly prehľad úloh</div>
+                <div class="list-group list-group-flush">
+                    {% for task in tasks %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <div class="fw-semibold">{{ task.title }}</div>
+                                    <div class="text-muted small">Kontakt: {{ task.contact.name }}</div>
+                                    {% if task.assignee %}
+                                        <div class="small">Pridelené: {{ task.assignee.username }}</div>
+                                    {% endif %}
+                                </div>
+                                <span class="badge-soft badge-soft-info">{{ task.status }}</span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="list-group-item text-muted">Zatiaľ žiadne úlohy</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

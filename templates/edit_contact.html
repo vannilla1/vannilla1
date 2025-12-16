@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h1 class="h4 mb-0 section-title">Upraviť kontakt</h1>
+                    <span class="badge-soft">Aktualizácia</span>
+                </div>
+                <p class="text-muted mb-4">Upravte údaje kontaktu a vráťte sa späť na detail pre rýchlu kontrolu.</p>
+                <form method="post" class="glass-panel">
+                    <div class="mb-3">
+                        <label class="form-label">Meno</label>
+                        <input class="form-control" type="text" name="name" value="{{ contact.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input class="form-control" type="email" name="email" value="{{ contact.email }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Telefón</label>
+                        <input class="form-control" type="text" name="phone" value="{{ contact.phone }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Poznámky</label>
+                        <textarea class="form-control" name="notes" rows="3">{{ contact.notes }}</textarea>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" type="submit">Uložiť zmeny</button>
+                        <a class="btn btn-link" href="{{ url_for('contact_detail', contact_id=contact.id) }}">Späť</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

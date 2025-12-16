@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h1 class="h4 mb-0 section-title">Nový kontakt</h1>
+                    <span class="badge-soft">Jednoduché pridanie</span>
+                </div>
+                <p class="text-muted mb-4">Vyplňte kontaktné údaje a pridajte poznámky, aby mal tím všetky informácie po ruke.</p>
+                <form method="post" class="glass-panel">
+                    <div class="mb-3">
+                        <label class="form-label">Meno</label>
+                        <input class="form-control" type="text" name="name" placeholder="Meno kontaktu" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input class="form-control" type="email" name="email" placeholder="osoba@example.com">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Telefón</label>
+                        <input class="form-control" type="text" name="phone" placeholder="+421 900 000 000">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Poznámky</label>
+                        <textarea class="form-control" name="notes" rows="3" placeholder="Dôležité kontextové informácie"></textarea>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" type="submit">Uložiť</button>
+                        <a class="btn btn-link" href="{{ url_for('contacts') }}">Späť</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

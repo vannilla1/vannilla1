@@ -89,14 +89,14 @@
                 {% if tasks %}
                     {% for task in tasks %}
                         <div class="mb-3">
-                            <div class="d-flex justify-content-between align-items-start">
+                            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                                 <div>
                                     <strong>{{ task.title }}</strong>
                                     <div class="text-muted small">{{ task.description }}</div>
                                     {% if task.assignee %}<div class="small">Pridelené: {{ task.assignee.username }}</div>{% endif %}
                                 </div>
-                                <div class="d-flex gap-2">
-                                    <form method="post" action="{{ url_for('update_task_status', task_id=task.id) }}" class="d-flex gap-2">
+                                <div class="d-flex align-items-center flex-wrap gap-1">
+                                    <form method="post" action="{{ url_for('update_task_status', task_id=task.id) }}" class="d-flex gap-2 align-items-center">
                                         <select class="form-select form-select-sm" name="status">
                                             {% for state in ['Nová','Rozpracovaná','Čaká','Hotová'] %}
                                                 <option value="{{ state }}" {% if task.status == state %}selected{% endif %}>{{ state }}</option>
@@ -104,10 +104,45 @@
                                         </select>
                                         <button class="btn btn-sm btn-outline-success" type="submit">Uložiť</button>
                                     </form>
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#editTask{{ task.id }}">Upraviť</button>
                                     <form method="post" action="{{ url_for('delete_task', task_id=task.id) }}" onsubmit="return confirm('Naozaj chcete vymazať túto úlohu?');">
                                         <button class="btn btn-sm btn-outline-danger" type="submit">Vymazať</button>
                                     </form>
                                 </div>
+                            </div>
+                            <div class="collapse" id="editTask{{ task.id }}">
+                                <form method="post" action="{{ url_for('edit_task', task_id=task.id) }}" class="card card-body border-0 p-3 mt-2 bg-light">
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Názov</label>
+                                            <input class="form-control form-control-sm" type="text" name="title" value="{{ task.title }}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Stav</label>
+                                            <select class="form-select form-select-sm" name="status">
+                                                {% for state in ['Nová','Rozpracovaná','Čaká','Hotová'] %}
+                                                    <option value="{{ state }}" {% if task.status == state %}selected{% endif %}>{{ state }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Pridelené</label>
+                                            <select class="form-select form-select-sm" name="assignee_id">
+                                                <option value="">Nepovinné</option>
+                                                {% for user in assignees %}
+                                                    <option value="{{ user.id }}" {% if task.assignee_id == user.id %}selected{% endif %}>{{ user.username }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label">Popis</label>
+                                            <textarea class="form-control form-control-sm" name="description" rows="2">{{ task.description }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 text-end">
+                                        <button class="btn btn-sm btn-primary" type="submit">Uložiť zmeny</button>
+                                    </div>
+                                </form>
                             </div>
                             {% if task.subtasks %}
                                 <ul class="list-group list-group-flush ms-3 mt-2">

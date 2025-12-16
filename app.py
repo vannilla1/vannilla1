@@ -211,6 +211,23 @@ def update_task_status(task_id):
     return redirect(url_for("contact_detail", contact_id=task.contact_id))
 
 
+@app.route("/tasks/<int:task_id>/edit", methods=["POST"])
+@login_required
+def edit_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    title = request.form.get("title")
+    if not title:
+        flash("Názov úlohy je povinný", "danger")
+        return redirect(url_for("contact_detail", contact_id=task.contact_id))
+    task.title = title
+    task.description = request.form.get("description")
+    task.status = request.form.get("status", task.status)
+    task.assignee_id = request.form.get("assignee_id") or None
+    db.session.commit()
+    flash("Úloha bola upravená", "success")
+    return redirect(url_for("contact_detail", contact_id=task.contact_id))
+
+
 @app.route("/tasks/<int:task_id>/delete", methods=["POST"])
 @login_required
 def delete_task(task_id):
